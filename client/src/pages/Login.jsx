@@ -1,36 +1,39 @@
-import { Link, Form, redirect, useNavigate } from "react-router-dom";
-import Wrapper from "../assets/wrappers/RegisterAndLoginPage";
-import { FormRow, Logo, SubmitBtn } from "../components";
-import customFetch from "../utils/customFetch";
-import { toast } from "react-toastify";
+import { Link, Form, redirect, useNavigate } from 'react-router-dom';
+import Wrapper from '../assets/wrappers/RegisterAndLoginPage';
+import { FormRow, Logo, SubmitBtn } from '../components';
+import customFetch from '../utils/customFetch';
+import { toast } from 'react-toastify';
 
-export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
+export const action =
+  (queryClient) =>
+  async ({ request }) => {
+    const formData = await request.formData();
+    const data = Object.fromEntries(formData);
 
-  try {
-    await customFetch.post("/auth/login", data);
-    toast.success("Login successful!");
-    return redirect("/dashboard");
-  } catch (error) {
-    toast.error(error?.response?.data?.msg);
-    return error;
-  }
-};
+    try {
+      await customFetch.post('/auth/login', data);
+      queryClient.invalidateQueries();
+      toast.success('Login successful!');
+      return redirect('/dashboard');
+    } catch (error) {
+      toast.error(error?.response?.data?.msg);
+      return error;
+    }
+  };
 
 function Login() {
   const navigate = useNavigate();
 
   const loginDemoUser = async () => {
     const data = {
-      email: "test@test.com",
-      password: "secret123",
+      email: 'test@test.com',
+      password: 'secret123',
     };
 
     try {
-      await customFetch.post("/auth/login", data);
-      toast.success("Test the app!");
-      navigate("/dashboard");
+      await customFetch.post('/auth/login', data);
+      toast.success('Test the app!');
+      navigate('/dashboard');
     } catch (error) {
       toast.error(error?.response?.data?.msg);
       return error;
@@ -39,19 +42,19 @@ function Login() {
 
   return (
     <Wrapper>
-      <Form method="post" className="form">
+      <Form method='post' className='form'>
         <Logo></Logo>
         <h4>Login</h4>
-        <FormRow type="email" name="email"></FormRow>
-        <FormRow type="password" name="password"></FormRow>
+        <FormRow type='email' name='email'></FormRow>
+        <FormRow type='password' name='password'></FormRow>
         <SubmitBtn />
-        <button type="button" className="btn-block btn" onClick={loginDemoUser}>
+        <button type='button' className='btn-block btn' onClick={loginDemoUser}>
           Explore The App
         </button>
 
         <p>
           Not a member yet?
-          <Link to="/register" className="member-btn">
+          <Link to='/register' className='member-btn'>
             Register
           </Link>
         </p>
